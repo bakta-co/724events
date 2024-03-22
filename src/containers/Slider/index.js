@@ -10,20 +10,30 @@ const Slider = () => {
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
   );
+  
   const nextCard = () => {
     setTimeout(
-      () => setIndex(index < byDateDesc.length ? index + 1 : 0),
-      5000
+      () => setIndex(index < byDateDesc.length -1 ? index + 1 : 0), // modif: ajout - 1
+   100
     );
   };
-  useEffect(() => {
-    nextCard();
-  });
+  useEffect(
+    () => {
+      const intervalId = setInterval(nextCard, 5000);
+
+      return () => clearInterval(intervalId);
+    },
+    // eslint-disable-next-line
+    [index, byDateDesc]);
+    
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <>
-          <div
+        <div
+        key={`slider-${event.id}`}
+        >
+          
+          <div 
             key={event.title}
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
@@ -40,17 +50,20 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
+              
               {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={`${event.id}`}
-                  type="radio"
-                  name="radio-button"
-                  checked={idx === radioIdx}
+                key = {`input-${_.id}`} // ajout key + id dans events.json
+                type="radio" 
+                readOnly
+                name="radio-button"
+                checked={idx === radioIdx}
+                
                 />
               ))}
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
